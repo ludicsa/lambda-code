@@ -1,0 +1,31 @@
+service: version1  
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1  
+  memorySize: 128
+  timeout: 30
+  stage: ${opt:stage, 'dev'}
+  environment:
+    SERVICE_NAME: ${self:service}
+
+functions:
+  functionOne:
+    handler: controllers/handler.functionOne
+    events:
+      - http:
+          path: functionOne
+          method: GET
+
+  functionTwo:
+    handler: controllers/handler.functionTwo
+    events:
+      - http:
+          path: functionTwo
+          method: POST
+
+plugins:
+  - serverless-offline 
