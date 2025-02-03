@@ -1,8 +1,8 @@
-service: version1 
+service: version1
 
 provider:
   name: aws
-  runtime: nodejs18.x 
+  runtime: nodejs18.x
   region: us-east-1
   stage: ${opt:stage, 'dev'}
   memorySize: 128
@@ -19,16 +19,22 @@ functions:
   functionA:
     handler: handler.functionA
     events:
-      - httpApi:
-          path: /version1/fA 
-          method: POST
+      - http:
+          path: version1/functionA
+          method: GET
   functionB:
     handler: handler.functionB
     events:
-      - httpApi:
-          path: /version1/fB 
+      - http:
+          path: version1/functionB
           method: POST
 
 plugins:
-  - serverless-offline  
+  - serverless-offline
+  - serverless-domain-manager
 
+custom:
+  customDomain:
+    domainName: "api.mycompany.com"
+    basePath: "${self:service}-${self:provider.stage}"
+    stage: ${self:provider.stage}

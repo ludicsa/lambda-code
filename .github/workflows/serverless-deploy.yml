@@ -1,18 +1,21 @@
-name: Deploy Serverless Lambda
+name: Deploy Lambda Function
 
 on:
   workflow_dispatch:
     inputs:
       microservice:
-        description: 'Select the microservice (e.g., version1, version2, version3)'
+        description: 'Choose the microservice (version1, version2, version3)'
         required: true
         type: choice
         options:
           - version1
           - version2
           - version3
+      function:
+        description: 'Choose the function to deploy'
+        required: true
       environment:
-        description: 'Deployment environment'
+        description: 'Choose environment (dev, stg, prod)'
         required: true
         type: choice
         options:
@@ -23,11 +26,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    container: 'node:20.10-alpine'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install Serverless Framework
+        run: npm i -g serverless@3
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -36,21 +41,7 @@ jobs:
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           aws-region: us-east-1
 
-      - name: Install Serverless Framework
-        run: npm install -g serverless@3
-
-      - name: Install dependencies
+      - name: Deploy Lambda Function
         run: |
-          cd service/${{ inputs.microservice }}
-          npm install
-
-      - name: Deploy Lambda with Serverless
-        run: |
-          cd service/${{ inputs.microservice }}
-          serverless deploy --stage ${{ inputs.environment }}
-
-      - name: Output API Gateway URL
-        run: |
-          API_URL=$(serverless info --verbose | grep "endpoints:" -A 2 | tail -n 1 | awk '{print $2}')
-          echo "API URL: $API_URL"
-          echo "API_URL=$API_URL" >> $GITHUB_ENV
+          cd lambda-code/service/${{ inputs.microservice }}
+          serverless deploy function -f ${{ inputs.function }} --stage ${{ inputs.environment }}

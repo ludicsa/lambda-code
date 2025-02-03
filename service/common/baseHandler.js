@@ -1,11 +1,15 @@
 module.exports.baseHandler = (controller) => {
     return async (event) => {
         try {
-            return await controller[event.requestContext.httpMethod](event);
+            const response = await controller(event);
+            return {
+                statusCode: 200,
+                body: JSON.stringify(response),
+            };
         } catch (error) {
             return {
-                statusCode: 500,
-                body: JSON.stringify({ error: error.message }),
+                statusCode: error.statusCode || 500,
+                body: JSON.stringify({ message: error.message || 'Internal Server Error' }),
             };
         }
     };
