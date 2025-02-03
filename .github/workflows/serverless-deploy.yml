@@ -49,6 +49,9 @@ jobs:
       - name: PWD in current directory
         run: pwd 
 
+      - name: LS in current directory
+        run: ls .
+
       - name: Deploy Lambda Function
         if: false
         run: |
