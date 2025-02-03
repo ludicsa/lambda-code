@@ -44,13 +44,6 @@ jobs:
           aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           aws-region: us-east-1
-      
-      ##debug step
-      - name: PWD in current directory
-        run: pwd 
-
-      - name: LS in current directory
-        run: ls .
 
       - name: Deploy Lambda Function
         if: false
