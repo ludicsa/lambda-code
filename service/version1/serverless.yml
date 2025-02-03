@@ -8,7 +8,7 @@ provider:
   memorySize: 128
   timeout: 30
   deploymentBucket:
-    name: serverless-deployment-bucket-1231315
+    name: serverless-deployment-bucket-12313156
   environment:
     NODE_ENV: ${self:provider.stage}
   tags:
