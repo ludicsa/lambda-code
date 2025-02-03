@@ -29,12 +29,3 @@ functions:
           path: version1/functionB
           method: POST
 
-plugins:
-  - serverless-offline
-  - serverless-domain-manager
-
-custom:
-  customDomain:
-    domainName: "api.mycompany.com"
-    basePath: "${self:service}-${self:provider.stage}"
-    stage: ${self:provider.stage}
