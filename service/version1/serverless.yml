@@ -19,22 +19,16 @@ functions:
   functionA:
     handler: handler.functionA
     events:
-      - http:
-          path: functionA
-          method: GET
+      - httpApi:
+          path: /version1/fA  # Mantendo alinhado com o API Gateway
+          method: POST
   functionB:
     handler: handler.functionB
     events:
-      - http:
-          path: functionB
+      - httpApi:
+          path: /version1/fB  # Mantendo alinhado com o API Gateway
           method: POST
 
 plugins:
   - serverless-offline  # Para rodar localmente
-  - serverless-domain-manager  # Caso tenha domínios customizados
 
-custom:
-  customDomain:
-    domainName: "api.mycompany.com"
-    basePath: "${self:service}-${self:provider.stage}"
-    stage: ${self:provider.stage}
