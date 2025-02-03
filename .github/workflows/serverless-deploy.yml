@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       microservice:
-        description: 'Choose the microservice (version1, version2, version3)'
+        description: "Select the microservice (e.g., version1, version2, version3)"
         required: true
         type: choice
         options:
@@ -12,14 +12,10 @@ on:
           - version2
           - version3
       function:
-        description: 'Choose the function to deploy'
+        description: "Select the Lambda function to deploy (inside the selected microservice)"
         required: true
-        type: choice
-        options:
-          - functionA
-          - functionB
       environment:
-        description: 'Choose environment (dev, stg, prod)'
+        description: "Deployment environment"
         required: true
         type: choice
         options:
@@ -35,9 +31,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Serverless Framework
-        run: npm i -g serverless@3
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -45,7 +38,33 @@ jobs:
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           aws-region: us-east-1
 
-      - name: Deploy Lambda Function
+      - name: Install Serverless Framework
+        run: npm install -g serverless
+
+      - name: Check if function exists
+        id: check-function
+        run: |
+          FUNCTION_NAME="${{ inputs.function }}"
+          MICRO_SERVICE="${{ inputs.microservice }}"
+          STAGE="${{ inputs.environment }}"
+          EXISTING_FUNCTION=$(aws lambda get-function --function-name "$MICRO_SERVICE-$FUNCTION_NAME-$STAGE" --query 'Configuration.FunctionArn' --output text || echo "not_found")
+
+          if [[ "$EXISTING_FUNCTION" == "not_found" ]]; then
+            echo "Function does not exist. Deploying full service..."
+            echo "DEPLOY_FULL_SERVICE=true" >> $GITHUB_ENV
+          else
+            echo "Function exists. Deploying only the function..."
+            echo "DEPLOY_FULL_SERVICE=false" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy Full Service (if function does not exist)
+        if: env.DEPLOY_FULL_SERVICE == 'true'
+        run: |
+          cd ${{ github.workspace }}/service/${{ inputs.microservice }}
+          serverless deploy --stage ${{ inputs.environment }}
+
+      - name: Deploy Single Function (if function exists)
+        if: env.DEPLOY_FULL_SERVICE == 'false'
         run: |
           cd ${{ github.workspace }}/service/${{ inputs.microservice }}
           serverless deploy function -f ${{ inputs.function }} --stage ${{ inputs.environment }}
