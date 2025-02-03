@@ -1,0 +1,56 @@
+name: Deploy Serverless Lambda
+
+on:
+  workflow_dispatch:
+    inputs:
+      microservice:
+        description: 'Select the microservice (e.g., version1, version2, version3)'
+        required: true
+        type: choice
+        options:
+          - version1
+          - version2
+          - version3
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        options:
+          - dev
+          - stg
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container: 'node:20.10-alpine'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          aws-region: us-east-1
+
+      - name: Install Serverless Framework
+        run: npm install -g serverless@3
+
+      - name: Install dependencies
+        run: |
+          cd service/${{ inputs.microservice }}
+          npm install
+
+      - name: Deploy Lambda with Serverless
+        run: |
+          cd service/${{ inputs.microservice }}
+          serverless deploy --stage ${{ inputs.environment }}
+
+      - name: Output API Gateway URL
+        run: |
+          API_URL=$(serverless info --verbose | grep "endpoints:" -A 2 | tail -n 1 | awk '{print $2}')
+          echo "API URL: $API_URL"
+          echo "API_URL=$API_URL" >> $GITHUB_ENV

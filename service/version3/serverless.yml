@@ -1,8 +1,8 @@
-service: version1 
+service: version3
 
 provider:
   name: aws
-  runtime: nodejs18.x 
+  runtime: nodejs18.x
   region: us-east-1
   stage: ${opt:stage, 'dev'}
   memorySize: 128
@@ -16,22 +16,22 @@ provider:
     Environment: ${self:provider.stage}
 
 functions:
-  functionA:
-    handler: handler.functionA
+  functionX:
+    handler: handler.functionX
     events:
       - http:
-          path: functionA
+          path: functionX
           method: GET
-  functionB:
-    handler: handler.functionB
+  functionY:
+    handler: handler.functionY
     events:
       - http:
-          path: functionB
+          path: functionY
           method: POST
 
 plugins:
-  - serverless-offline  # Para rodar localmente
-  - serverless-domain-manager  # Caso tenha domínios customizados
+  - serverless-offline
+  - serverless-domain-manager
 
 custom:
   customDomain:

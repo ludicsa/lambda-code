@@ -1,31 +1,40 @@
-service: version2 
-
-frameworkVersion: "3"
+service: version2
 
 provider:
   name: aws
-  runtime: nodejs20.x
-  region: us-east-2
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
   memorySize: 128
   timeout: 30
-  stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: serverless-deployment-bucket-1231315
   environment:
-    SERVICE_NAME: ${self:service}
+    NODE_ENV: ${self:provider.stage}
+  tags:
+    Project: "LambdaCode"
+    Environment: ${self:provider.stage}
 
 functions:
-  functionOne:
-    handler: controllers/handler.functionOne
+  functionX:
+    handler: handler.functionX
     events:
       - http:
-          path: functionOne
+          path: functionX
           method: GET
-
-  functionTwo:
-    handler: controllers/handler.functionTwo
+  functionY:
+    handler: handler.functionY
     events:
       - http:
-          path: functionTwo
+          path: functionY
           method: POST
 
 plugins:
   - serverless-offline
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: "api.mycompany.com"
+    basePath: "${self:service}-${self:provider.stage}"
+    stage: ${self:provider.stage}
