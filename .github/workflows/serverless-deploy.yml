@@ -14,6 +14,10 @@ on:
       function:
         description: 'Choose the function to deploy'
         required: true
+        type: choice
+        options:
+          - functionA
+          - functionB
       environment:
         description: 'Choose environment (dev, stg, prod)'
         required: true
