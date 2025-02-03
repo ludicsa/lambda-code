@@ -43,7 +43,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Install Serverless Framework
-        run: npm install -g serverless
+        run: npm install -g serverless@3
 
       - name: Check if function exists
         id: check-function
