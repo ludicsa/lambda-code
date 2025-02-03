@@ -55,5 +55,5 @@ jobs:
       - name: Deploy Lambda Function
         if: false
         run: |
-          cd lambda-code/service/${{ inputs.microservice }}
+          cd ${{ github.workspace }}/service/${{ inputs.microservice }}
           serverless deploy function -f ${{ inputs.function }} --stage ${{ inputs.environment }}
