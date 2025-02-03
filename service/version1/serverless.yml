@@ -20,15 +20,15 @@ functions:
     handler: handler.functionA
     events:
       - httpApi:
-          path: /version1/fA  # Mantendo alinhado com o API Gateway
+          path: /version1/fA 
           method: POST
   functionB:
     handler: handler.functionB
     events:
       - httpApi:
-          path: /version1/fB  # Mantendo alinhado com o API Gateway
+          path: /version1/fB 
           method: POST
 
 plugins:
-  - serverless-offline  # Para rodar localmente
+  - serverless-offline  
 
