@@ -14,6 +14,10 @@ on:
       function:
         description: "Select the Lambda function to deploy (inside the selected microservice)"
         required: true
+        type: choice
+        options:
+          - functionA
+          - functionB
       environment:
         description: "Deployment environment"
         required: true
