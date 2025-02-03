@@ -1,5 +1,9 @@
 service: version1
 
+package:
+  include:
+    - common/**
+
 provider:
   name: aws
   runtime: nodejs18.x
