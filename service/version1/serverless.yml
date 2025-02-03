@@ -1,8 +1,8 @@
 service: version1
 
 package:
-  include:
-    - common/**
+  patterns:
+    - ../common/**
 
 provider:
   name: aws
